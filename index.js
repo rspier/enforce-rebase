@@ -21,7 +21,7 @@ const run = async () => {
 
 
   let noMergesCmd =
-    `output=$(git log --oneline origin/${BRANCH}...HEAD --merges) && [ -z "$output" ] || echo $output`;
+    `[[ -z "$(git log --oneline origin/${BRANCH}...HEAD --merges )" ]]`
   let correctBaseCmd =
     `[ "$(git merge-base origin/${BRANCH} HEAD)" = "$(git rev-parse origin/${BRANCH})" ]`;
 
