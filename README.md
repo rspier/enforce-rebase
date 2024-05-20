@@ -24,7 +24,7 @@ It will fail any pushed PR branches if:
 ## Example use
 
 Here's an example `action.yml` file.  Note that you must explicitly include
-the `actions/checkout@v2` step as well as the `enforce-rebase@v2` step:
+the `actions/checkout@v4` step as well as the `enforce-rebase@v2` step:
 
 ```yaml
 name: Enforce Rebasing
@@ -38,7 +38,7 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: Is Rebased on master?

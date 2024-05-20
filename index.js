@@ -23,7 +23,7 @@ const run = async () => {
   // Typical use of this action:
   //  steps:
   //  - name: Check out code
-  //    uses: actions/checkout@v2
+  //    uses: actions/checkout@v4
   //    with:
   //      fetch-depth: 0
   //  - name: Is Rebased on master?
