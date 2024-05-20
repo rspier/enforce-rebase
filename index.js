@@ -2,22 +2,24 @@ const core = require('@actions/core');
 const { exec } = require('child_process');
 
 const runShellCmd = async (command, failureMessage) => {
-    return exec(command, (error, stdout, stderr) => {
+    let code = exec(command, (error, stdout, stderr) => {
+      console.log(stdout);
       let errorMessage = '';
       if (error)
-        errorMessage += `${failureMessage}: ${error.message}`;
+        errorMessage += `${failureMessage}\n\n\n${error.message}`;
       if (stderr)
-        errorMessage += `\nStandard Error: ${stderr}`;
-      if (error || errorMessage)
+        errorMessage += `ERROR: ${stderr}`;
+      if (error || errorMessage) {
         core.setFailed(errorMessage);
-      console.log(stdout);
+        return;
+      }
     });
 }
 
 const run = async () => {
   const BRANCH = core.getInput('default-branch');
-  const MERGES_FAILURE = "Pull requests have no merge commits";
-  const BASE_FAILURE = `Pull request must be rebased on ${BRANCH}`;
+  const MERGES_FAILURE = "Pull requests should not contain merge commits";
+  const BASE_FAILURE = `Pull request must be rebased on to ${BRANCH}`;
 
 
   // Typical use of this action:
@@ -52,16 +54,8 @@ const run = async () => {
     `[ "$(git merge-base origin/${BRANCH} HEAD)" = "$(git rev-parse origin/${BRANCH})" ]`;
 
   try {
-    let results = Array();
-    results.push(await runShellCmd(noMergesCmd, MERGES_FAILURE));
-    results.push(await runShellCmd(correctBaseCmd, BASE_FAILURE));
-
-    results.forEach(result => {
-      result.on('exit', code => {
-        if (code != 0)
-          core.setFailed('Invalid return code for message');
-      });
-    });
+    await runShellCmd(noMergesCmd, MERGES_FAILURE);
+    await runShellCmd(correctBaseCmd, BASE_FAILURE);
   } catch (error) {
     core.setFailed(error)
   }
